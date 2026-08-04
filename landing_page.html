@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>InvoiceAI — Automate Your Invoices</title>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    
+    <style>
+        /* ========== RESET & BASE ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1e293b;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-primary {
+            display: inline-block;
+            background: #2563eb;
+            color: #fff;
+            padding: 14px 36px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: #2563eb;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid #2563eb;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        /* ========== HEADER / NAVBAR ========== */
+        header {
+            background: #fff;
+            padding: 16px 0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .logo span {
+            color: #2563eb;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            color: #475569;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-cta {
+            background: #2563eb;
+            color: #fff !important;
+            padding: 8px 24px;
+            border-radius: 40px;
+            transition: background 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: #1d4ed8 !important;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            padding: 80px 0 60px;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #475569;
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .hero .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hero .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* ========== FEATURES ========== */
+        .features {
+            padding: 80px 0;
+            background: #fff;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .features .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 48px;
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            padding: 32px 24px;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+        }
+
+        .feature-card i {
+            font-size: 2.8rem;
+            color: #2563eb;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* ========== HOW IT WORKS ========== */
+        .how-it-works {
+            padding: 80px 0;
+            background: #f1f5f9;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 48px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .step {
+            text-align: center;
+            background: #fff;
+            padding: 32px 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .step .number {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .step h4 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+
+        .step p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* ========== PRICING ========== */
+        .pricing {
+            padding: 80px 0;
+            background: #fff;
+        }
+
+        .pricing h2 {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .pricing .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 48px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+
+        .pricing-card.popular {
+            border-color: #2563eb;
+            background: #fff;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+            position: relative;
+        }
+
+        .pricing-card .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2563eb;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+
+        .pricing-card .price {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin: 16px 0 4px;
+        }
+
+        .pricing-card .price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #64748b;
+        }
+
+        .pricing-card .description {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            text-align: left;
+            margin: 16px 0 24px;
+        }
+
+        .pricing-card ul li {
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #334155;
+        }
+
+        .pricing-card ul li i {
+            color: #2563eb;
+            width: 20px;
+        }
+
+        /* ========== TESTIMONIALS ========== */
+        .testimonials {
+            padding: 80px 0;
+            background: #f8fafc;
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 48px;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .testimonial {
+            background: #fff;
+            padding: 24px 20px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .testimonial .stars {
+            color: #f59e0b;
+            margin-bottom: 8px;
+        }
+
+        .testimonial .text {
+            font-style: italic;
+            color: #334155;
+        }
+
+        .testimonial .author {
+            margin-top: 12px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .testimonial .author span {
+            font-weight: 400;
+            color: #64748b;
+            display: block;
+            font-size: 0.85rem;
+        }
+
+        /* ========== CTA ========== */
+        .cta {
+            padding: 80px 0;
+            background: #0f172a;
+            color: #fff;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            color: #94a3b8;
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+        }
+
+        .cta .btn-primary {
+            background: #fff;
+            color: #0f172a;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+        }
+
+        .cta .btn-primary:hover {
+            background: #e2e8f0;
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background: #0f172a;
+            border-top: 1px solid #1e293b;
+            padding: 24px 0;
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #94a3b8;
+            margin: 0 12px;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== HEADER ==================== -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">Invoice<span>AI</span></div>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#cta" class="nav-cta">Start Free Trial</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <span class="badge">🚀 AI-Powered Invoice Automation</span>
+            <h1>Stop Typing Invoices. <br/><span>Let AI Do It.</span></h1>
+            <p>
+                Automatically extract, categorize, and approve invoices — no manual data entry.
+                Trusted by businesses across India.
+            </p>
+            <div class="hero-buttons">
+                <a href="#cta" class="btn-primary">Start Free Trial</a>
+                <a href="#features" class="btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FEATURES ==================== -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Everything You Need</h2>
+            <p class="subtitle">One platform to handle all your invoice chaos.</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Intake</h3>
+                    <p>Forward invoices to your dedicated email. Our AI reads them instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>AI Extraction</h3>
+                    <p>Vendor name, total, line items — extracted with 95%+ accuracy.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-tags"></i>
+                    <h3>Smart Categorisation</h3>
+                    <p>Auto-categorises expenses into your chart of accounts.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Approval Workflow</h3>
+                    <p>One-click approve/reject via Slack, Email, or Dashboard.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-sync-alt"></i>
+                    <h3>QuickBooks Sync</h3>
+                    <p>Approved invoices sync directly to QuickBooks/Xero.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Spend Analytics</h3>
+                    <p>Yearly and monthly spending reports — see where your money goes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="number">1</div>
+                    <h4>Forward Invoice</h4>
+                    <p>Send your PDF invoice to our email or upload via dashboard.</p>
+                </div>
+                <div class="step">
+                    <div class="number">2</div>
+                    <h4>AI Extracts Data</h4>
+                    <p>Our AI reads vendor, total, line items — even from messy invoices.</p>
+                </div>
+                <div class="step">
+                    <div class="number">3</div>
+                    <h4>Approve in 1 Click</h4>
+                    <p>Review, approve or reject via Slack, Email, or Dashboard.</p>
+                </div>
+                <div class="step">
+                    <div class="number">4</div>
+                    <h4>Sync & Report</h4>
+                    <p>Approved invoices sync to your accounting software automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRICING ==================== -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2>Simple Pricing</h2>
+            <p class="subtitle">No hidden fees. Cancel anytime.</p>
+
+            <div class="pricing-grid">
+                <!-- Starter -->
+                <div class="pricing-card">
+                    <h4>Starter</h4>
+                    <div class="price">₹5,000 <span>/mo</span></div>
+                    <div class="description">For small businesses</div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> 100 invoices/month</li>
+                        <li><i class="fas fa-check"></i> Email approvals</li>
+                        <li><i class="fas fa-check"></i> Basic reports</li>
+                        <li><i class="fas fa-check"></i> Email support</li>
+                    </ul>
+                    <a href="#cta" class="btn-secondary" style="width:100%; text-align:center;">Start Trial</a>
+                </div>
+
+                <!-- Professional (Popular) -->
+                <div class="pricing-card popular">
+                    <span class="popular-badge">🔥 Most Popular</span>
+                    <h4>Professional</h4>
+                    <div class="price">₹15,000 <span>/mo</span></div>
+                    <div class="description">For growing businesses</div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> 500 invoices/month</li>
+                        <li><i class="fas fa-check"></i> Slack + Email approvals</li>
+                        <li><i class="fas fa-check"></i> Advanced reports</li>
+                        <li><i class="fas fa-check"></i> QuickBooks/Xero sync</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                    </ul>
+                    <a href="#cta" class="btn-primary" style="width:100%; text-align:center;">Start Trial</a>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="pricing-card">
+                    <h4>Enterprise</h4>
+                    <div class="price">₹30,000 <span>/mo</span></div>
+                    <div class="description">For large businesses</div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Unlimited invoices</li>
+                        <li><i class="fas fa-check"></i> Custom categories</li>
+                        <li><i class="fas fa-check"></i> White-label dashboard</li>
+                        <li><i class="fas fa-check"></i> Dedicated support</li>
+                        <li><i class="fas fa-check"></i> Custom integrations</li>
+                    </ul>
+                    <a href="#cta" class="btn-secondary" style="width:100%; text-align:center;">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TESTIMONIALS ==================== -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2>What Our Clients Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p class="text">"We save 10 hours every week on invoice processing. Best decision we made."</p>
+                    <div class="author">Rajesh Sharma <span>Medical Store Owner, Delhi</span></div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p class="text">"The AI extracts data with 95% accuracy. No more manual data entry errors."</p>
+                    <div class="author">Priya Patel <span>CA Firm, Mumbai</span></div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p class="text">"Slack approvals changed our workflow. Approve invoices in seconds."</p>
+                    <div class="author">Amit Singh <span>E-commerce Founder, Bangalore</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CTA ==================== -->
+    <section class="cta" id="cta">
+        <div class="container">
+            <h2>Ready to Automate Your Invoices?</h2>
+            <p>Join 50+ businesses that save time and money with InvoiceAI.</p>
+            <a href="#" class="btn-primary">Start Free 15-Day Trial</a>
+            <p style="margin-top:16px; font-size:0.9rem; color:#64748b;">No credit card required.</p>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer>
+        <div class="container">
+            <p>
+                &copy; 2026 InvoiceAI. All rights reserved.
+                <a href="#">Privacy Policy</a> |
+                <a href="#">Terms of Service</a> |
+                <a href="#">Contact</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==================== SMOOTH SCROLL ==================== -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
