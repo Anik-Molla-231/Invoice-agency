@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # ------------------- API CONFIG -------------------
-API_BASE_URL = "http://localhost:8000/api"  # Your FastAPI backend
+API_BASE_URL = "https://invoice-agency-api.onrender.com/api"  # Your FastAPI backend
 
 # ------------------- SIDEBAR -------------------
 st.sidebar.image("https://img.icons8.com/fluency/96/000000/invoice.png", width=80)
