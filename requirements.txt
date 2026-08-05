@@ -8,6 +8,7 @@ sqlalchemy==2.0.35
 psycopg2-binary==2.9.10
 python-dotenv==1.0.1
 python-multipart==0.0.17
+schedule==1.2.0
 
 # ==========================================
 # AI - Required
