@@ -147,6 +147,7 @@ class ClientDB(Base):
     
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    chart_of_accounts = Column(JSON, default=dict)
 
 # ==========================================
 # INIT DATABASE
