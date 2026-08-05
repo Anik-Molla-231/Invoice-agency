@@ -20,7 +20,7 @@ st.set_page_config(
 )
 
 # ------------------- API CONFIG -------------------
-API_BASE_URL = "http://localhost:8000/api"
+API_BASE_URL = "https://invoice-agency-api.onrender.com/api"
 
 # ------------------- SIDEBAR -------------------
 st.sidebar.title("⚙️ Admin Dashboard")
