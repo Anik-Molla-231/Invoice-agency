@@ -21,6 +21,11 @@ from agents.approval_agent import ApprovalAgent
 from agents.sync_agent import SyncAgent
 from agents.reminder_agent import ReminderAgent
 from core.config import config
+if not config.openai_api_key:
+    print("⚠️ WARNING: OPENAI_API_KEY not set. Extractor agent will not work.")
+    extractor_agent = None
+else:
+    extractor_agent = ExtractorAgent()
 from core.database import SessionLocal, InvoiceDB, ClientDB
 
 # ------------------- Application Lifespan -------------------
