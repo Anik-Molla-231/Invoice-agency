@@ -5,6 +5,25 @@ import pandas as pd
 from datetime import datetime, timedelta
 import plotly.express as px
 import plotly.graph_objects as go
+from urllib.parse import urlparse, parse_qs
+# dashboard.py - Add this at the top, after imports
+
+
+# ------------------- GET API KEY FROM URL -------------------
+def get_api_key():
+    """Read API key from URL query parameters."""
+    # Check if already in session state
+    if st.session_state.get("api_key"):
+        return st.session_state.api_key
+    
+    # Read from URL
+    params = st.query_params
+    if "api_key" in params:
+        api_key = params["api_key"]
+        st.session_state.api_key = api_key
+        return api_key
+    
+    return None
 
 
 # ------------------- PAGE CONFIG -------------------
@@ -15,8 +34,35 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ------------------- AUTHENTICATION -------------------
+api_key = get_api_key()
+
+if not api_key:
+    st.warning("🔑 Please provide your API key")
+    st.info("Your access link was sent to your email. If you don't have it, contact support.")
+    st.stop()  # Stop execution if no API key
+
 # ------------------- API CONFIG -------------------
-API_BASE_URL = "https://invoice-agency-api.onrender.com/api"  # Your FastAPI backend
+API_BASE_URL = "https://invoice-agency-api.onrender.com/api"
+HEADERS = {"X-API-Key": api_key}
+
+
+# Test the API key
+try:
+    response = requests.get(f"{API_BASE_URL}/invoices", headers=HEADERS, timeout=5)
+    if response.status_code == 401 or response.status_code == 403:
+        st.error("❌ Invalid API Key. Please check your access link.")
+        st.stop()
+    elif response.status_code != 200:
+        st.warning("⚠️ Could not connect to server. Please try again later.")
+except Exception as e:
+    st.error(f"❌ Connection error: {e}")
+    st.stop()
+
+# ------------------- REST OF YOUR DASHBOARD -------------------
+# ... (your existing dashboard code)
+# Make sure ALL API calls use HEADERS = {"X-API-Key": st.session_state.api_key}
+
 
 # ------------------- SIDEBAR -------------------
 st.sidebar.image("https://img.icons8.com/fluency/96/000000/invoice.png", width=80)
@@ -30,10 +76,39 @@ page = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.caption(f"Connected to: {API_BASE_URL}")
 st.sidebar.caption(f"Session: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
 
 # ------------------- HELPER FUNCTIONS -------------------
+# ------------------- FETCH CLIENT BRANDING -------------------
+@st.cache_data(ttl=300)
+def fetch_client_branding(api_key):
+    """Fetch client's company name and logo from backend."""
+    try:
+        response = requests.get(
+            f"{API_BASE_URL}/clients/me/branding",
+            headers={"X-API-Key": api_key}
+        )
+        if response.status_code == 200:
+            return response.json()
+    except:
+        pass
+    return {"company_name": "My Dashboard", "logo_base64": None}
+
+# After authentication
+branding = fetch_client_branding(st.session_state.api_key)
+
+# ------------------- DISPLAY BRANDING -------------------
+col1, col2 = st.columns([1, 4])
+
+with col1:
+    if branding.get('logo_base64'):
+        st.image(f"data:image/png;base64,{branding['logo_base64']}", width=80)
+    else:
+        st.image("https://img.icons8.com/fluency/96/000000/invoice.png", width=80)
+
+with col2:
+    st.title(f"Welcome, {branding.get('company_name', 'Client')}!")
+    st.caption("Your automated invoice dashboard")
 @st.cache_data(ttl=60)  # Cache for 60 seconds
 def fetch_invoices():
     """Fetch all invoices from the API."""

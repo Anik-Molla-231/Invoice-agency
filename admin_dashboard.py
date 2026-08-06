@@ -10,6 +10,7 @@ import requests
 import plotly.express as px
 from datetime import datetime, timedelta
 import secrets
+import base64
 
 # ------------------- PAGE CONFIG -------------------
 st.set_page_config(
@@ -166,7 +167,8 @@ elif page == "👥 Clients":
     st.markdown("---")
     
     clients = fetch_all_clients()
-    
+    DASHBOARD_URL = "https://anik-molla-231-invoice-agency-dashboard-3xmcob.streamlit.app"
+
     if clients:
         df = pd.DataFrame(clients)
         
@@ -226,6 +228,13 @@ elif page == "👥 Clients":
     else:
         st.info("No clients found. Add your first client!")
 
+    # Generate the magic link
+    magic_link = f"{DASHBOARD_URL}?api_key={client.get('api_key')}"
+
+    # Display magic link
+    st.text_input("🔗 Client Access Link", value=magic_link, disabled=True)
+    st.caption("Send this link to your client. They don't need a password.")
+
 # 3. ALL INVOICES PAGE
 elif page == "📄 All Invoices":
     st.title("📄 All Invoices")
@@ -280,11 +289,15 @@ elif page == "➕ Add Client":
             client_name = st.text_input("Client Name *", placeholder="Acme Corp")
             contact_email = st.text_input("Contact Email *", placeholder="admin@acme.com")
             billing_email = st.text_input("Billing Email", placeholder="finance@acme.com")
-        
+            company_name = st.text_input("Company Name (for dashboard)", placeholder="Acme Corporation")
+
         with col2:
             tier = st.selectbox("Tier", ["starter", "professional", "enterprise"])
             auto_approve_threshold = st.number_input("Auto-Approval Threshold (₹)", min_value=0, value=5000)
             monthly_invoice_limit = st.number_input("Monthly Invoice Limit", min_value=1, value=100)
+            logo_file = st.file_uploader("Upload Company Logo (PNG/JPG)", type=['png', 'jpg', 'jpeg'])
+            if logo_file:
+                st.image(logo_file, width=100, caption="Preview")
         
         notes = st.text_area("Notes (Optional)")
         
@@ -294,21 +307,51 @@ elif page == "➕ Add Client":
             if not client_name or not contact_email:
                 st.error("Client Name and Contact Email are required!")
             else:
-                result = create_client(
-                    name=client_name,
-                    email=contact_email,
-                    tier=tier,
-                    threshold=auto_approve_threshold
-                )
+                # Prepare logo as base64
+                logo_base64 = None
+                if logo_file:
+                    logo_base64 = base64.b64encode(logo_file.getvalue()).decode()
                 
-                if "error" in result:
-                    st.error(f"❌ Failed: {result['error']}")
-                else:
-                    st.success(f"✅ Client '{client_name}' added successfully!")
-                    st.balloons()
-                    st.json(result)
-                    st.cache_data.clear()
-
+                # Prepare payload
+                payload = {
+                    "client_name": client_name,
+                    "contact_email": contact_email,
+                    "billing_email": billing_email or contact_email,
+                    "tier": tier,
+                    "auto_approve_threshold": auto_approve_threshold,
+                    "monthly_invoice_limit": monthly_invoice_limit,
+                    "company_name": company_name or client_name,
+                    "logo_base64": logo_base64,
+                    "notes": notes
+                }
+                
+                # Send to backend
+                try:
+                    response = requests.post(
+                        f"{API_BASE_URL}/clients",
+                        json=payload,
+                        headers={"X-API-Key": st.secrets["ADMIN_API_KEY"]},
+                        timeout=10
+                    )
+                    
+                    if response.status_code == 200:
+                        result = response.json()
+                        st.success(f"✅ Client '{client_name}' added successfully!")
+                        st.balloons()
+                        
+                        # Display the magic link
+                        DASHBOARD_URL = "https://your-dashboard.streamlit.app"
+                        magic_link = f"{DASHBOARD_URL}?api_key={result.get('api_key')}"
+                        st.info(f"🔗 Client Access Link: `{magic_link}`")
+                        st.caption("Copy this link and send it to your client.")
+                        st.balloons()
+                        st.json(result)
+                        st.cache_data.clear()
+                    else:
+                        st.error(f"❌ Failed: {response.text}")
+                except Exception as e:
+                    st.error(f"❌ Error: {e}")
+                    
 # 5. REVENUE PAGE
 elif page == "💰 Revenue":
     st.title("💰 Revenue Analytics")

@@ -491,6 +491,16 @@ async def get_spend_summary(client: ClientDB = Depends(get_current_client)):
     finally:
         db.close()
 
+
+@app.get("/api/clients/me/branding")
+async def get_client_branding(client: ClientDB = Depends(get_current_client)):
+    """Get client's company name and logo."""
+    config = client.config or {}
+    return {
+        "company_name": config.get("company_name", client.client_name),
+        "logo_base64": config.get("logo_base64")
+    }
+
 # ------------------- Scheduled Jobs -------------------
 
 def run_intake_job():
