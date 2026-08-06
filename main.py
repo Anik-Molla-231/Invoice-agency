@@ -491,6 +491,71 @@ async def get_spend_summary(client: ClientDB = Depends(get_current_client)):
     finally:
         db.close()
 
+@app.post("/api/clients")
+async def create_client(payload: dict):
+    """
+    Create a new client with branding (logo, company name).
+    🔒 TODO: Add admin authentication before going live.
+    """
+    db = SessionLocal()
+    
+    try:
+        import secrets
+        
+        # Check if client already exists
+        existing = db.query(ClientDB).filter(
+            ClientDB.client_name == payload.get("client_name")
+        ).first()
+        
+        if existing:
+            db.close()
+            raise HTTPException(status_code=400, detail="Client name already exists")
+        
+        # Generate API key
+        api_key = f"ck_{secrets.token_urlsafe(32)}"
+        
+        # Build config with branding
+        config = {
+            "company_name": payload.get("company_name", payload.get("client_name")),
+            "logo_base64": payload.get("logo_base64"),
+            "notes": payload.get("notes", ""),
+            "chart_of_accounts": {}
+        }
+        
+        # Create client
+        client = ClientDB(
+            client_id=f"client_{secrets.token_urlsafe(8)}",
+            client_name=payload.get("client_name"),
+            contact_email=payload.get("contact_email"),
+            billing_email=payload.get("billing_email"),
+            api_key=api_key,
+            tier=payload.get("tier", "starter"),
+            status="active",
+            config=config,
+            auto_approve_threshold=payload.get("auto_approve_threshold", 5000),
+            monthly_invoice_limit=payload.get("monthly_invoice_limit", 100)
+        )
+        
+        db.add(client)
+        db.commit()
+        db.refresh(client)
+        db.close()
+        
+        return {
+            "status": "success",
+            "client_id": client.client_id,
+            "client_name": client.client_name,
+            "api_key": api_key,
+            "branding": {
+                "company_name": config.get("company_name"),
+                "logo_uploaded": bool(config.get("logo_base64"))
+            }
+        }
+        
+    except Exception as e:
+        db.rollback()
+        db.close()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/clients/me/branding")
 async def get_client_branding(client: ClientDB = Depends(get_current_client)):
