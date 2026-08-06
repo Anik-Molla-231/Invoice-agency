@@ -289,15 +289,23 @@ elif page == "➕ Add Client":
             client_name = st.text_input("Client Name *", placeholder="Acme Corp")
             contact_email = st.text_input("Contact Email *", placeholder="admin@acme.com")
             billing_email = st.text_input("Billing Email", placeholder="finance@acme.com")
-            company_name = st.text_input("Company Name (for dashboard)", placeholder="Acme Corporation")
-
+            
+            # ========== NEW: Company Name for Branding ==========
+            company_name = st.text_input("🏷️ Company Name (for dashboard)", 
+                                         placeholder="Acme Corporation",
+                                         help="This will appear on the client's dashboard")
+            
+            # ========== NEW: Logo Upload ==========
+            logo_file = st.file_uploader("Upload Company Logo (PNG/JPG)", 
+                                         type=['png', 'jpg', 'jpeg'],
+                                         help="Upload your client's logo. It will appear on their dashboard.")
+            if logo_file:
+                st.image(logo_file, width=100, caption="Preview")
+        
         with col2:
             tier = st.selectbox("Tier", ["starter", "professional", "enterprise"])
             auto_approve_threshold = st.number_input("Auto-Approval Threshold (₹)", min_value=0, value=5000)
             monthly_invoice_limit = st.number_input("Monthly Invoice Limit", min_value=1, value=100)
-            logo_file = st.file_uploader("Upload Company Logo (PNG/JPG)", type=['png', 'jpg', 'jpeg'])
-            if logo_file:
-                st.image(logo_file, width=100, caption="Preview")
         
         notes = st.text_area("Notes (Optional)")
         
@@ -310,6 +318,7 @@ elif page == "➕ Add Client":
                 # Prepare logo as base64
                 logo_base64 = None
                 if logo_file:
+                    import base64
                     logo_base64 = base64.b64encode(logo_file.getvalue()).decode()
                 
                 # Prepare payload
@@ -320,7 +329,7 @@ elif page == "➕ Add Client":
                     "tier": tier,
                     "auto_approve_threshold": auto_approve_threshold,
                     "monthly_invoice_limit": monthly_invoice_limit,
-                    "company_name": company_name or client_name,
+                    "company_name": company_name or client_name,  # Use client name if not provided
                     "logo_base64": logo_base64,
                     "notes": notes
                 }
@@ -344,7 +353,7 @@ elif page == "➕ Add Client":
                         magic_link = f"{DASHBOARD_URL}?api_key={result.get('api_key')}"
                         st.info(f"🔗 Client Access Link: `{magic_link}`")
                         st.caption("Copy this link and send it to your client.")
-                        st.balloons()
+                        
                         st.json(result)
                         st.cache_data.clear()
                     else:
