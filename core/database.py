@@ -25,7 +25,20 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///invoices.db")
 #     connect_args = {"check_same_thread": False}
 
 is_sqlite = False
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={
+        "sslmode": "require",
+        "connect_timeout": 10,
+        "keepalives_idle": 5,
+        "keepalives_interval": 2,
+        "keepalives_count": 2,
+    },
+    pool_pre_ping=True,           # ✅ Check connection before using
+    pool_recycle=300,              # ✅ Recycle connections every 5 minutes
+    pool_size=5,                   # ✅ Max connections in pool
+    max_overflow=10,               # ✅ Extra connections if needed
+)
 
 # ==========================================
 # SESSION MAKER
