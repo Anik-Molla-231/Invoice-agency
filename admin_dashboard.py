@@ -201,6 +201,9 @@ elif page == "👥 Clients":
                 with col5:
                     DASHBOARD_URL = "https://anik-molla-231-invoice-agency-dashboard-3xmcob.streamlit.app"
                     magic_link = f"{DASHBOARD_URL}?api_key={client.get('api_key')}"
+                    # Display magic link
+                    st.text_input("🔗 Client Access Link", value=magic_link, disabled=True)
+                    st.caption("Send this link to your client. They don't need a password.")
 
                     # View button
                     if st.button("📋 View", key=f"view_{client.get('id')}"):
@@ -234,9 +237,6 @@ elif page == "👥 Clients":
     
     
 
-    # Display magic link
-    st.text_input("🔗 Client Access Link", value=magic_link, disabled=True)
-    st.caption("Send this link to your client. They don't need a password.")
 
 # 3. ALL INVOICES PAGE
 elif page == "📄 All Invoices":
