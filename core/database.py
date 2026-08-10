@@ -2,7 +2,7 @@
 Database Configuration - Complete file with all models
 """
 
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, JSON, LargeBinary, ForeignKey
+from sqlalchemy import create_engine, text, Column, Integer, String, Float, Boolean, DateTime, JSON, LargeBinary, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from datetime import datetime
@@ -169,6 +169,13 @@ def init_db():
     """Create all tables if they don't exist."""
     Base.metadata.create_all(bind=engine)
     print("✅ Database tables created successfully!")
+    """Initialize database and test connection."""
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+            print("✅ Database connected successfully!")
+    except Exception as e:
+        print(f"⚠️ Database connection issue: {e}")
 
 def cleanup_session(db: Session):
     """Clean up a database session."""
