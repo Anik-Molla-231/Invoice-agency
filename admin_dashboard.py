@@ -199,6 +199,9 @@ elif page == "👥 Clients":
                     st.caption("Auto-approve")
                 
                 with col5:
+                    DASHBOARD_URL = "https://anik-molla-231-invoice-agency-dashboard-3xmcob.streamlit.app"
+                    magic_link = f"{DASHBOARD_URL}?api_key={client.get('api_key')}"
+
                     # View button
                     if st.button("📋 View", key=f"view_{client.get('id')}"):
                         st.session_state.selected_client = client
@@ -228,8 +231,8 @@ elif page == "👥 Clients":
     else:
         st.info("No clients found. Add your first client!")
 
-    # Generate the magic link
-    magic_link = f"{DASHBOARD_URL}?api_key={client.get('api_key')}"
+    
+    
 
     # Display magic link
     st.text_input("🔗 Client Access Link", value=magic_link, disabled=True)
