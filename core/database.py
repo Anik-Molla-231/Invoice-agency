@@ -169,7 +169,7 @@ def init_db():
     """Create all tables if they don't exist."""
     Base.metadata.create_all(bind=engine)
     print("✅ Database tables created successfully!")
-    """Initialize database and test connection."""
+    """Initialize database and test connections."""
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
