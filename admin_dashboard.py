@@ -205,10 +205,10 @@ elif page == "👥 Clients":
                     st.text_input("🔗 Client Access Link", value=magic_link, disabled=True)
                     st.caption("Send this link to your client. They don't need a password.")
 
-                    # View button
-                    if st.button("📋 View", key=f"view_{client.get('id')}"):
-                        st.session_state.selected_client = client
-                        st.rerun()
+                # View button
+                if st.button("📋 View", key=f"view_{client.get('id')}"):
+                    st.session_state.selected_client = client
+                    st.rerun()
         
         st.markdown("---")
         
@@ -352,7 +352,7 @@ elif page == "➕ Add Client":
                         st.balloons()
                         
                         # Display the magic link
-                        DASHBOARD_URL = "https://your-dashboard.streamlit.app"
+                        DASHBOARD_URL = "https://anik-molla-231-invoice-agency-dashboard-3xmcob.streamlit.app"
                         magic_link = f"{DASHBOARD_URL}?api_key={result.get('api_key')}"
                         st.info(f"🔗 Client Access Link: `{magic_link}`")
                         st.caption("Copy this link and send it to your client.")
