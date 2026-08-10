@@ -70,6 +70,8 @@ class InvoiceDB(Base):
     __tablename__ = "invoices"
     
     id = Column(Integer, primary_key=True, index=True)
+
+    client_id = Column(String, ForeignKey("clients.client_id"), index=True)
     
     # Basic info
     invoice_number = Column(String, index=True, nullable=True)
