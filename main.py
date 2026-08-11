@@ -491,6 +491,31 @@ async def get_spend_summary(client: ClientDB = Depends(get_current_client)):
     finally:
         db.close()
 
+@app.get("/api/clients")
+async def get_all_clients():
+    """Get all clients."""
+    db = SessionLocal()
+    try:
+        clients = db.query(ClientDB).all()
+        return [
+            {
+                "id": c.id,
+                "client_id": c.client_id,
+                "client_name": c.client_name,
+                "contact_email": c.contact_email,
+                "tier": c.tier,
+                "status": c.status,
+                "api_key": c.api_key,
+                "auto_approve_threshold": c.auto_approve_threshold,
+                "created_at": c.created_at,
+                "config": c.config
+            }
+            for c in clients
+        ]
+    finally:
+        db.close()
+
+        
 @app.post("/api/clients")
 async def create_client(payload: dict):
     """
