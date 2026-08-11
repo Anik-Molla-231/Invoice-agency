@@ -113,7 +113,10 @@ with col2:
 def fetch_invoices():
     """Fetch all invoices from the API."""
     try:
-        response = requests.get(f"{API_BASE_URL}/invoices")
+        response = requests.get(
+            f"{API_BASE_URL}/invoices",
+            headers=HEADERS,
+            timeout=10)
         if response.status_code == 200:
             return response.json()
         else:
