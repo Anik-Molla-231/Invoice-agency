@@ -324,7 +324,7 @@ elif page == "📤 Upload Invoice":
             with st.spinner("Processing..."):
                 try:
                     files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "application/pdf")}
-                    response = requests.post(f"{API_BASE_URL}/upload-invoice", files=files)
+                    response = requests.post(f"{API_BASE_URL}/upload-invoice", files=files, headers=HEADERS, timeout=5)
                     
                     if response.status_code == 200:
                         result = response.json()
