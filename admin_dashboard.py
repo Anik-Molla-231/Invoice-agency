@@ -207,13 +207,13 @@ elif page == "👥 Clients":
 
                 # View button
                 if st.button("📋 View", key=f"view_{client.get('id')}"):
-                    st.session_state.selected_client = client
+                    st.session_state.selected_client = client.to_dict()
                     st.rerun()
         
         st.markdown("---")
         
         # Show selected client details
-        if st.session_state.get('selected_client'):
+        if st.session_state.get('selected_client') is not None:
             client = st.session_state.selected_client
             st.subheader(f"📋 Client Details: {client.get('client_name')}")
             
