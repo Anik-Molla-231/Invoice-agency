@@ -130,7 +130,7 @@ def fetch_invoices():
 def fetch_spend_summary():
     """Fetch spend summary from the API."""
     try:
-        response = requests.get(f"{API_BASE_URL}/spend-summary")
+        response = requests.get(f"{API_BASE_URL}/spend-summary", headers=HEADERS, timeout=5)
         if response.status_code == 200:
             return response.json()
         else:
@@ -346,7 +346,7 @@ elif page == "⚙️ Settings":
     
     st.subheader("📊 Database Stats")
     try:
-        response = requests.get(f"{API_BASE_URL}/invoices")
+        response = requests.get(f"{API_BASE_URL}/invoices", headers=HEADERS, timeout=5)
         if response.status_code == 200:
             st.metric("Total Invoices in DB", len(response.json()))
         else:
@@ -377,7 +377,7 @@ if page == "💰 Yearly Spending":
     st.markdown("---")
     
     try:
-        response = requests.get(f"{API_BASE_URL}/spend-yearly")
+        response = requests.get(f"{API_BASE_URL}/spend-yearly", headers=HEADERS, timeout=5)
         if response.status_code == 200:
             data = response.json()
             if data.get('success') and data.get('data'):
@@ -462,7 +462,7 @@ elif page == "📊 Monthly Spending":
     
     # Get the latest year from the data
     try:
-        response = requests.get(f"{API_BASE_URL}/spend-yearly")
+        response = requests.get(f"{API_BASE_URL}/spend-yearly", headers=HEADERS, timeout=5)
         if response.status_code == 200:
             data = response.json()
             if data.get('success') and data.get('data'):
@@ -481,7 +481,7 @@ elif page == "📊 Monthly Spending":
                     st.markdown("---")
                     
                     # Fetch monthly data for selected year
-                    response2 = requests.get(f"{API_BASE_URL}/spend-monthly/{selected_year}")
+                    response2 = requests.get(f"{API_BASE_URL}/spend-monthly/{selected_year}", headers=HEADERS, timeout=5)
                     if response2.status_code == 200:
                         monthly_data = response2.json()
                         
