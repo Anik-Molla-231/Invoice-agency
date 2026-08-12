@@ -341,8 +341,6 @@ elif page == "⚙️ Settings":
     st.title("⚙️ Settings")
     st.markdown("---")
     
-    st.subheader("🔗 API Connection")
-    st.code(API_BASE_URL)
     
     st.subheader("📊 Database Stats")
     try:
